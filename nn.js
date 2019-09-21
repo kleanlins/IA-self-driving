@@ -1,3 +1,6 @@
+// Cleanderson Lins
+// Neuro-Evolutional Steering
+
 class NeuralNetwork {
 	constructor(a, b, c, d) {
 		if (a instanceof tf.Sequential) {
@@ -12,7 +15,7 @@ class NeuralNetwork {
 			this.model = this.createModel();
 		}
 	}
-	
+
 	copy() {
 		return tf.tidy(() => {
 			const modelCopy = this.createModel();
@@ -25,7 +28,7 @@ class NeuralNetwork {
 			return new NeuralNetwork(modelCopy, this.input_nodes, this.hidden_nodes, this.output_nodes);
 		});
 	}
-	
+
 	mutate(rate) {
 		tf.tidy(() => {
 			const weights = this.model.getWeights();
@@ -46,11 +49,11 @@ class NeuralNetwork {
 			this.model.setWeights(mutatedWeights);
 		});
 	}
-	
+
 	dispose() {
 		this.model.dispose();
 	}
-	
+
 	predict(inputs) {
 		return tf.tidy(() => {
 			const xs = tf.tensor2d([inputs]);
@@ -60,7 +63,7 @@ class NeuralNetwork {
 			return outputs;
 		});
 	}
-	
+
 	createModel() {
 		const model = tf.sequential();
 		const hidden = tf.layers.dense({
