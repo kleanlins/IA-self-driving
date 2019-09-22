@@ -7,11 +7,11 @@ class Particle {
         this.dead = false
         this.finished = false
         this.pos = createVector(start.x, start.y)
-        this.rays = []
         this.vel = createVector()
         this.acc = createVector()
-        this.maxSpeed = 3
+        this.rays = []
         this.sight = 90
+        this.maxSpeed = 3
         for (let a = 0; a < 360; a += 45) {
             this.rays.push(new Ray(this.pos, radians(a)))
         }
@@ -61,12 +61,12 @@ class Particle {
 
     look(walls) {
         const inputs = []
-
         for (let i = 0; i < this.rays.length; i++) {
+            const ray = this.rays[i]
             let closest = null
             let record = this.sight
             for (let wall of walls) {
-                const pt = this.rays[i].cast(wall)
+                const pt = ray.cast(wall)
                 if (pt) {
                     const d = p5.Vector.dist(this.pos, pt)
                     if (d < record && d < this.sight) {

@@ -1,8 +1,8 @@
 // Cleanderson Lins
 // Neuro-Evolutional Steering
 
-let TOTAL = 100
-let MUTATION_RATE = 0.1
+const TOTAL = 100
+const MUTATION_RATE = 0.1
 
 let start, end
 
@@ -27,8 +27,6 @@ function setup() {
 	start = createVector(100, 700)
 	end = createVector(700, 200)
 
-	ray = new Ray(100, 200)
-
 	for (let i = 0; i < TOTAL; i++) {
 		population[i] = new Particle()
 	}
@@ -43,10 +41,10 @@ function draw() {
 
 
 	for (let particle of population) {
+		particle.look(walls)
 		particle.check(end)
 		particle.update()
 		particle.show()
-		particle.look(walls)
 	}
 
 	for (let i = population.length - 1; i >= 0; i--) {
@@ -60,15 +58,5 @@ function draw() {
 		nextGeneration()
 	}
 
-	// ray.show()
-	// ray.lookAt(mouseX, mouseY)
-
-	// let pt = ray.cast(wall)
-
-	// if (pt){
-	// 	fill(255)
-	// 	ellipse(pt.x, pt.y, 8, 8)
-	// }
-	ellipse(start.x, start.y, 10)
 	ellipse(end.x, end.y, 10)
 }

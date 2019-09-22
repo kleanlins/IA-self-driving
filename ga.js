@@ -5,12 +5,14 @@ function nextGeneration() {
     console.log("Next generation.")
     calculateFitness(end)
     for (let i = 0; i < TOTAL; i++) {
+        // console.log("picking one for " + i)
         population[i] = pickOne()
     }
-    for (let i = 0; i < TOTAL; i++) {
-        savedParticles[i].dispose()
 
+    for (let particle of savedParticles) {
+        // particle.dispose()
     }
+
     savedPaticles = []
 }
 
@@ -22,8 +24,8 @@ function pickOne() {
         index++
     }
     index--
-    // TODO: implement copy Particle
     let particle = savedParticles[index]
+    // TODO: implement copy Particle
     let child = new Particle(particle.brain)
     child.mutate()
     return child
@@ -33,9 +35,8 @@ function calculateFitness(target) {
     for (let particle of savedParticles) {
         particle.calculateFitness(target)
     }
-    let sum = 0
-
     //Normalize all values
+    let sum = 0
     for (let particle of savedParticles) {
         sum += particle.fitness
     }
