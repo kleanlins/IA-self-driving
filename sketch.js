@@ -1,9 +1,10 @@
 // Cleanderson Lins
 // Neuro-Evolutional Steering
 
-const TOTAL = 200
+const TOTAL = 1
 const MUTATION_RATE = 0.05
-const LIFESPAN = 300
+const LIFESPAN = 50
+const SIGHT = 300
 
 let start, end
 
@@ -73,6 +74,7 @@ function setup() {
 function draw() {
 	const cycles = speedSlider.value()
 
+	background(0)
 	for (let n = 0; n <= cycles; n++) {
 		for (let particle of population) {
 			particle.look(walls)
@@ -94,7 +96,7 @@ function draw() {
 		}
 	}
 
-	background(0)
+
 
 	for (let cp of checkpoints) {
 		// strokeWeight(2)

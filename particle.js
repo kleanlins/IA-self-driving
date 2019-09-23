@@ -1,6 +1,12 @@
 // Cleanderson Lins
 // Neuro-Evolutional Steering
 
+function pldistance(p1, p2, x, y) {
+    const num = abs((p2.y - p1.y) * x - (p2.x - p1.x) * y + (p2.x * p1.y) - (p2.y * p1.x))
+    const den = p5.Vector.dist(p1, p2)
+    return num / den
+}
+
 class Particle {
     constructor(brain) {
         this.fitness = 0
@@ -10,12 +16,12 @@ class Particle {
         this.vel = createVector()
         this.acc = createVector()
         this.rays = []
-        this.sight = 120
+        this.sight = SIGHT
         this.maxSpeed = 3
         this.maxForce = 0.1
         this.index = 0
         this.counter
-        for (let a = 0; a < 360; a += 45) {
+        for (let a = -45; a < 45; a += 5) {
             this.rays.push(new Ray(this.pos, radians(a)))
         }
         if (brain) {
@@ -39,20 +45,28 @@ class Particle {
             if (this.counter > LIFESPAN) {
                 this.dead = true
             }
+            for (let ray of this.rays) {
+                ray.rotate(this.vel.heading())
+            }
         }
     }
 
     check(checkpoints) {
         if (!this.finished) {
-            const goal = checkpoints[this.index].midpoint()
-            const d = p5.Vector.dist(this.pos, goal)
-            if (d < 50) {
+            this.goal = checkpoints[this.index]
+            const d = pldistance(this.goal.a, this.goal.b, this.pos.x, this.pos.y)
+
+            if (d < 5) {
                 this.counter = 0
                 this.index++
                 if (this.index == checkpoints.length - 1) {
                     this.finished = true
                 }
             }
+        }
+
+        for (let i = 0; i < this.index; i++) {
+            checkpoints[i].show()
         }
     }
 
@@ -98,18 +112,25 @@ class Particle {
 
             inputs[i] = map(record, 0, 50, 1, 0)
 
+
             if (closest) {
-                // stroke(255, 255, 255, 100)
-                // line(this.pos.x, this.pos.y, closest.x, closest.y)
+                stroke(255, 255, 255, 100)
+                line(this.pos.x, this.pos.y, closest.x, closest.y)
             }
         }
 
+
+        // const vel = this.vel.copy()
+        // vel.normalize()
+        // inputs.push(vel.x)
+        // inputs.push(vel.y)
         const output = this.brain.predict(inputs)
-        const angle = map(output[0], 0, 1, 0, TWO_PI)
+        let angle = map(output[0], 0, 1, -PI, PI)
+        angle += this.vel.heading()
         const steering = p5.Vector.fromAngle(angle)
         steering.setMag(this.maxSpeed)
         steering.sub(this.vel)
-        // steering.limit(this.maxForce)
+        steering.limit(this.maxForce)
         this.applyForce(steering)
     }
 
