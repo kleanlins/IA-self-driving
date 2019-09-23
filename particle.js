@@ -10,8 +10,11 @@ class Particle {
         this.vel = createVector()
         this.acc = createVector()
         this.rays = []
-        this.sight = 90
+        this.sight = 120
         this.maxSpeed = 3
+        this.maxForce = 0.1
+        this.index = 0
+        this.counter
         for (let a = 0; a < 360; a += 45) {
             this.rays.push(new Ray(this.pos, radians(a)))
         }
@@ -32,7 +35,34 @@ class Particle {
             this.vel.limit(this.maxSpeed)
             this.vel.add(this.acc)
             this.acc.set(0, 0)
+            this.counter++
+            if (this.counter > LIFESPAN) {
+                this.dead = true
+            }
         }
+    }
+
+    check(checkpoints) {
+        if (!this.finished) {
+            const goal = checkpoints[this.index].midpoint()
+            const d = p5.Vector.dist(this.pos, goal)
+            if (d < 50) {
+                this.counter = 0
+                this.index++
+                if (this.index == checkpoints.length - 1) {
+                    this.finished = true
+                }
+            }
+        }
+    }
+
+    calculateFitness() {
+        this.fitness = pow(2, this.index)
+        // if (this.finished) {
+        // } else {
+        //     const d = p5.Vector.dist(this.pos, target)
+        //     this.fitness = constrain(1 / d, 0, 1)
+        // }
     }
 
     mutate() {
@@ -43,21 +73,7 @@ class Particle {
         this.brain.dispose()
     }
 
-    check(target) {
-        const d = p5.Vector.dist(this.pos, target)
-        if (d < 10) {
-            this.finished = true
-        }
-    }
 
-    calculateFitness(target) {
-        if (this.finished) {
-            this.fitness = 1
-        } else {
-            const d = p5.Vector.dist(this.pos, target)
-            this.fitness = constrain(1 / d, 0, 1)
-        }
-    }
 
     look(walls) {
         const inputs = []
@@ -83,8 +99,8 @@ class Particle {
             inputs[i] = map(record, 0, 50, 1, 0)
 
             if (closest) {
-                stroke(255, 255, 255, 100)
-                line(this.pos.x, this.pos.y, closest.x, closest.y)
+                // stroke(255, 255, 255, 100)
+                // line(this.pos.x, this.pos.y, closest.x, closest.y)
             }
         }
 
@@ -93,15 +109,24 @@ class Particle {
         const steering = p5.Vector.fromAngle(angle)
         steering.setMag(this.maxSpeed)
         steering.sub(this.vel)
+        // steering.limit(this.maxForce)
         this.applyForce(steering)
     }
 
+    bounds() {
+        if (this.pos.x > width || this.pos.x < 0 || this.pos.y > height || this.pos.y < 0) {
+            this.dead = true
+        }
+    }
 
     show() {
+        push()
+        translate(this.pos.x, this.pos.y, )
+        const heading = this.vel.heading()
+        rotate(heading)
         fill(255, 100)
-        ellipse(this.pos.x, this.pos.y, 5)
-        for (let ray of this.rays) {
-            // ray.show()
-        }
+        rectMode(CENTER)
+        rect(0, 0, 10, 5)
+        pop()
     }
 }

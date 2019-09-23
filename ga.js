@@ -2,10 +2,8 @@
 // Neuro-Evolutional Steering
 
 function nextGeneration() {
-    console.log("Next generation.")
     calculateFitness(end)
     for (let i = 0; i < TOTAL; i++) {
-        // console.log("picking one for " + i)
         population[i] = pickOne()
     }
 
@@ -14,6 +12,7 @@ function nextGeneration() {
     }
 
     savedPaticles = []
+    console.log("New generation.")
 }
 
 function pickOne() {
@@ -33,7 +32,7 @@ function pickOne() {
 
 function calculateFitness(target) {
     for (let particle of savedParticles) {
-        particle.calculateFitness(target)
+        particle.calculateFitness()
     }
     //Normalize all values
     let sum = 0
